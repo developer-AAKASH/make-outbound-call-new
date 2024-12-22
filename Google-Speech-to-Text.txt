@@ -1,0 +1,40 @@
+const speech = require('@google-cloud/speech');
+const client = new speech.SpeechClient();
+
+const twilioWebSocket = new WebSocket('your-twilio-websocket-url');
+const request = {
+    config: {
+        encoding: 'MULAW', // Twilio sends audio in MULAW format
+        sampleRateHertz: 8000, // Twilio streams at 8000 Hz
+        languageCode: 'en-US',
+    },
+    interimResults: true, // If you want interim results
+};
+
+// Create a recognition stream
+const recognizeStream = client
+    .streamingRecognize(request)
+    .on('data', async (data) => {
+        if (data.results[0] && data.results[0].alternatives[0]) {
+            const userInput = data.results[0].alternatives[0].transcript;
+            console.log('User said:', userInput);
+
+            // Detect intent and trigger events
+            const intent = await classifyIntent(userInput);
+            if (intent === 'appointment') {
+                console.log('Triggering appointment booking logic...');
+            }
+        }
+    })
+    .on('error', (err) => console.error('Speech recognition error:', err))
+    .on('end', () => console.log('Speech recognition stream ended.'));
+
+// Stream Twilio audio to Google
+twilioWebSocket.on('message', (message) => {
+    const parsedMessage = JSON.parse(message);
+
+    if (parsedMessage.event === 'media') {
+        const audioData = Buffer.from(parsedMessage.media.payload, 'base64');
+        recognizeStream.write(audioData);
+    }
+});

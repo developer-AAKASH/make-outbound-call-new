@@ -1,0 +1,23 @@
+{
+  "name": "test-outbound",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AakashIsBest",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fastify/formbody": "^8.0.1",
+    "@fastify/websocket": "^11.0.1",
+    "@google-cloud/speech": "^6.7.0",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "fastify": "^5.2.0",
+    "openai": "^4.77.0",
+    "twilio": "^5.4.0",
+    "ws": "^8.18.0"
+  }
+}
